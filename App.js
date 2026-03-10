@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, Pressable, ImageBackground, StyleSheet, Alert } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as SQLite from 'expo-sqlite';
 
@@ -181,45 +181,51 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
-        <View style={styles.container}>
-          <Image
-            source={require('./assets/imagem.png')}
-            style={styles.imagem}
-            resizeMode="contain"
-          />
+        <ImageBackground
+          source={require('./assets/imagem.png')}
+          style={styles.background}
+          resizeMode="cover"
+        >
+          <View style={styles.overlay}>
+            {fase === 'inicio' && (
+              <View style={styles.card}>
+                <Text style={styles.titulo}>Quiz de Perguntas</Text>
+                <Text style={styles.subtitulo}>
+                  Perguntas carregadas no banco: {perguntas.length}
+                </Text>
 
-          {fase === 'inicio' && (
-            <>
-              <Text style={styles.titulo}>Quiz de Perguntas</Text>
-              <Text style={styles.subtitulo}>
-                Perguntas carregadas no banco: {perguntas.length}
-              </Text>
-              <Button title="Iniciar" onPress={iniciarJogo} />
-            </>
-          )}
+                <Pressable style={styles.botao} onPress={iniciarJogo}>
+                  <Text style={styles.botaoTexto}>Iniciar</Text>
+                </Pressable>
+              </View>
+            )}
 
-          {fase === 'jogando' && (
-            <>
-              <Text style={styles.titulo}>Quiz em andamento...</Text>
-              <Text style={styles.subtitulo}>
-                Pergunta {indiceAtual + 1} de {perguntasJogo.length}
-              </Text>
-              <Text style={styles.subtitulo}>
-                Acertos até agora: {acertos}
-              </Text>
-            </>
-          )}
+            {fase === 'jogando' && (
+              <View style={styles.card}>
+                <Text style={styles.titulo}>Quiz em andamento...</Text>
+                <Text style={styles.subtitulo}>
+                  Pergunta {indiceAtual + 1} de {perguntasJogo.length}
+                </Text>
+                <Text style={styles.subtitulo}>
+                  Acertos até agora: {acertos}
+                </Text>
+              </View>
+            )}
 
-          {fase === 'fim' && (
-            <>
-              <Text style={styles.titulo}>Fim</Text>
-              <Text style={styles.subtitulo}>
-                Você acertou {acertos} de {perguntasJogo.length}
-              </Text>
-              <Button title="Reiniciar" onPress={reiniciarJogo} />
-            </>
-          )}
-        </View>
+            {fase === 'fim' && (
+              <View style={styles.card}>
+                <Text style={styles.titulo}>Fim</Text>
+                <Text style={styles.subtitulo}>
+                  Você acertou {acertos} de {perguntasJogo.length}
+                </Text>
+
+                <Pressable style={styles.botao} onPress={reiniciarJogo}>
+                  <Text style={styles.botaoTexto}>Reiniciar</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+        </ImageBackground>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -228,27 +234,51 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#000'
   },
-  container: {
+  background: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16
+    width: '100%',
+    height: '100%'
   },
-  imagem: {
-    width: 300,
-    height: 300,
-    marginBottom: 20
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
+  card: {
+    width: '85%',
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    borderRadius: 12,
+    paddingVertical: 28,
+    paddingHorizontal: 20,
+    alignItems: 'center'
   },
   titulo: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10
+    marginBottom: 12,
+    textAlign: 'center',
+    color: '#222'
   },
   subtitulo: {
     fontSize: 16,
     marginBottom: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    color: '#333'
+  },
+  botao: {
+    backgroundColor: '#1976D2',
+    paddingVertical: 12,
+    paddingHorizontal: 28,
+    borderRadius: 8,
+    elevation: 3
+  },
+  botaoTexto: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold'
   }
 });
